@@ -11,4 +11,6 @@ public interface RequestLogService {
 
 	void convertLogIntoRequestLog(String line);
 
+	int getTotalRequests();
+
 }

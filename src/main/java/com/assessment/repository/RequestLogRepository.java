@@ -19,5 +19,8 @@ public class RequestLogRepository {
         requestLogList.clear();
     }
 
+    public int getTotalRequests() {
+        return requestLogList.size();
+    }
 
 }

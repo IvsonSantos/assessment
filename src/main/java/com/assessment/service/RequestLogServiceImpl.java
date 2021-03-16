@@ -76,7 +76,10 @@ public class RequestLogServiceImpl implements RequestLogService {
          */
     }
 
-
+    @Override
+    public int getTotalRequests() {
+        return repository.getTotalRequests();
+    }
 
 
 }
