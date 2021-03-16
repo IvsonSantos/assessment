@@ -12,9 +12,6 @@ public class Test {
     public static void main(String[] args) {
 
 
-        //System.out.println(part[0]);
-        //System.out.println(line);
-
 /*
         ZoneId timeZone = ZoneId.of("US/Eastern");
         LocalDate march1985 = LocalDate.of(2017, Month.MARCH, 1);

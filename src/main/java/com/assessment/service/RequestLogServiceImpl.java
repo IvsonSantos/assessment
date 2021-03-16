@@ -5,27 +5,21 @@ import com.assessment.repository.RequestLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class RequestLogServiceImpl implements RequestLogService {
 
     private static final String REQUEST = "REQUEST";
+    private static final String KO = "KO";
 
     @Autowired
     RequestLogRepository repository;
 
     @Override
-    public List<RequestLog> convertLogIntoListOfFilteresRequests(String filename) throws IOException {
+    public void convertLogIntoListOfFilteresRequests(String filename) throws IOException {
 
         repository.clearRequests();
 
@@ -41,8 +35,6 @@ public class RequestLogServiceImpl implements RequestLogService {
             log = br.readLine();
         }
         br.close();
-
-        return RequestLogRepository.requestLogList;
     }
 
     @Override
@@ -60,20 +52,10 @@ public class RequestLogServiceImpl implements RequestLogService {
         String status = part[5];
         String message = "";
         if ("KO".equals(status)) {
-          message = part[6];
+            message = part[6];
         }
 
         repository.saveRequest(new RequestLog(type, id, name, start, end, status, message));
-
-        /*
-        List<String> sources = Stream.of(headerSections)
-                .filter(headerSection -> headerSection.split(" ")[0].equals(directive))
-                .flatMap(headerSection -> Arrays.stream(headerSection.split(" ")))
-                .collect(Collectors.toList());
-        sources.removeIf(source -> source.equals(directive));
-        return sources;
-
-         */
     }
 
     @Override
@@ -81,5 +63,12 @@ public class RequestLogServiceImpl implements RequestLogService {
         return repository.getTotalRequests();
     }
 
+    @Override
+    public int getTotalFailedRequest() {
+        List<RequestLog> failed = repository.requestLogList.stream()
+                .filter(request -> request.getStatus().equals(KO))
+                .collect(Collectors.toList());
+        return failed.size();
+    }
 
 }
