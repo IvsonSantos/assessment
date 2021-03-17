@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.LongSummaryStatistics;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,14 +91,14 @@ public class RequestLogServiceImpl implements RequestLogService {
     }
 
     private double getAverageForEndpoint(String endpoint) {
-        List<RequestLog> list =
+        List<RequestLog> endpointlist =
                 repository.requestLogList.stream()
                         .filter(request -> request.getName().equals(endpoint))
                         .collect(Collectors.toList());
 
         List<Long> times = new ArrayList<>();
 
-        list.stream().forEach(requestLog -> {
+        endpointlist.stream().forEach(requestLog -> {
             long diffInMils = requestLog.getReceivedTime() - requestLog.getSentTime();
             times.add(diffInMils);
         });
@@ -111,8 +109,16 @@ public class RequestLogServiceImpl implements RequestLogService {
 
         System.out.println("AVERAGE " + endpoint + " " + stats.getAverage());
 
+        if (times.size() >= 99) {
+            System.out.println("PERCENTILE 95 " + getPercentile(times, 95));
+            System.out.println("PERCENTILE 99 " + getPercentile(times, 99));
+        }
+
         return stats.getAverage();
     }
-
+    private Long getPercentile(List<Long> times, int position) {
+        int index = (int) Math.ceil((position / 100f) * times.size());
+        return times.get(index);
+    }
 
 }

@@ -20,9 +20,9 @@ public class AssessmentTestApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 		requestLogService.convertLogIntoListOfFilteresRequests("data.log");
 
-		//System.out.println("Total of REQUESTS: " + requestLogService.getTotalRequests());
+		System.out.println("Total of REQUESTS: " + requestLogService.getTotalRequests());
 
-		//System.out.println("Total of FAILED requests: " + requestLogService.getTotalFailedRequest());
+		System.out.println("Total of FAILED requests: " + requestLogService.getTotalFailedRequest());
 
 		requestLogService.getAverageResponseTimeForEndpoints();
     }
