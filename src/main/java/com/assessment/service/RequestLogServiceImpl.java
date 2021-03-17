@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -14,6 +18,7 @@ public class RequestLogServiceImpl implements RequestLogService {
 
     private static final String REQUEST = "REQUEST";
     private static final String KO = "KO";
+    private static final String OK = "OK";
 
     @Autowired
     RequestLogRepository repository;
@@ -70,5 +75,44 @@ public class RequestLogServiceImpl implements RequestLogService {
                 .collect(Collectors.toList());
         return failed.size();
     }
+
+    @Override
+    public int getAverageResponseTimeForEndpoints() {
+
+        List<String> endpoints = repository.requestLogList.stream()
+                .filter(request -> request.getStatus().equals(OK))
+                .map(request -> request.getName())
+                .distinct()
+                .collect(Collectors.toList());
+
+        endpoints.stream().forEach(
+                endpoint -> getAverageForEndpoint(endpoint)
+        );
+
+        return 0;
+    }
+
+    private double getAverageForEndpoint(String endpoint) {
+        List<RequestLog> list =
+                repository.requestLogList.stream()
+                        .filter(request -> request.getName().equals(endpoint))
+                        .collect(Collectors.toList());
+
+        List<Long> times = new ArrayList<>();
+
+        list.stream().forEach(requestLog -> {
+            long diffInMils = requestLog.getReceivedTime() - requestLog.getSentTime();
+            times.add(diffInMils);
+        });
+
+        LongSummaryStatistics stats = times.stream()
+                .mapToLong((x) -> x)
+                .summaryStatistics();
+
+        System.out.println("AVERAGE " + endpoint + " " + stats.getAverage());
+
+        return stats.getAverage();
+    }
+
 
 }

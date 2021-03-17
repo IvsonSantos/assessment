@@ -18,11 +18,13 @@ public class AssessmentTestApplication implements CommandLineRunner {
 	
 	@Override
     public void run(String... args) throws Exception {
-		requestLogService.convertLogIntoListOfFilteresRequests("data 2.log");
+		requestLogService.convertLogIntoListOfFilteresRequests("data.log");
 
-		System.out.println("Total of REQUESTS: " + requestLogService.getTotalRequests());
+		//System.out.println("Total of REQUESTS: " + requestLogService.getTotalRequests());
 
-		System.out.println("Total of FAILED requests: " + requestLogService.getTotalFailedRequest());
+		//System.out.println("Total of FAILED requests: " + requestLogService.getTotalFailedRequest());
+
+		requestLogService.getAverageResponseTimeForEndpoints();
     }
 
 }

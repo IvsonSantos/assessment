@@ -12,4 +12,5 @@ public interface RequestLogService {
 
 	int getTotalFailedRequest();
 
+	int getAverageResponseTimeForEndpoints();
 }
